@@ -5,6 +5,7 @@ import baseFetcher from "../api";
 
 type ResultImage = {
   datauri: string;
+  batch_id?: number;
 };
 
 const ResultImageRoutes = {
@@ -18,9 +19,10 @@ const ResultImageService = {
       datauri: base64Img,
     });
   },
-  evaluate_pwb: (base64Img: string) => {
+  evaluate_pwb: (data: ResultImage) => {
     return baseFetcher.post<ResultImage, any>(ResultImageRoutes.evaluatePWB, {
-      datauri: base64Img,
+      datauri: data.datauri,
+      batch_id: data.batch_id,
     });
   },
 };
@@ -35,10 +37,12 @@ const saveImageMutation: MutationFetcher<
 
 const evaluateMutation: MutationFetcher<
   AxiosResponse<ClassificationResult>,
-  ResultImage,
+  {
+    data: ResultImage;
+  },
   string
 > = (_, { arg }) => {
-  return ResultImageService.evaluate_pwb(arg.datauri);
+  return ResultImageService.evaluate_pwb(arg.data);
 };
 export type EvaluationResult = {
   result: ClassificationResult;

@@ -1,16 +1,21 @@
 import { Button } from "@mantine/core";
-import { useBatchNumberStore } from "../../../store";
+import { useBatchStore } from "../../../store";
 import { useResultStore } from "../../results/store";
 
-const UploadFinishButton = () => {
-  const resetBatchNumber = useBatchNumberStore(
-    (state) => state.resetBatchNumber
-  );
+type Props = {
+  callback?: () => void;
+};
+const UploadFinishButton = ({ callback }: Props) => {
+  const resetBatchId = useBatchStore((state) => state.resetBatchId);
   const resetResults = useResultStore((state) => state.reset);
 
   const handleFinish = () => {
-    resetBatchNumber();
+    resetBatchId();
     resetResults();
+
+    if (callback) {
+      callback();
+    }
   };
   return (
     <Button variant="subtle" onClick={handleFinish} w="fit-content" ml="auto">

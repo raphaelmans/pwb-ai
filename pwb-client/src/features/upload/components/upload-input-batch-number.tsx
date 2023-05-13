@@ -10,21 +10,21 @@ import {
   Button,
 } from "@mantine/core";
 import { IconPlus, IconMinus } from "@tabler/icons-react";
-import { useBatchNumberStore } from "../../../store";
+import { useBatchStore } from "../../../store";
 import z from "zod";
 
-interface UploadBatchNumberInputProps {
+interface UploadBatchIdInputProps {
   min?: number;
   max?: number;
 }
 
-function UploadBatchNumberInput({ min = 1 }: UploadBatchNumberInputProps) {
+function UploadBatchIdInput({ min = 1 }: UploadBatchIdInputProps) {
   const { classes } = useStyles();
 
-  const { setBatchNumber, batchNumber } = useBatchNumberStore((state) => {
+  const { setbatchId, batchId } = useBatchStore((state) => {
     return {
-      setBatchNumber: state.setBatchNumber,
-      batchNumber: state.batchNumber,
+      setbatchId: state.setBatchId,
+      batchId: state.batchId,
     };
   });
   const handlers = useRef<NumberInputHandlers>(null);
@@ -38,7 +38,7 @@ function UploadBatchNumberInput({ min = 1 }: UploadBatchNumberInputProps) {
             size={28}
             variant="transparent"
             onClick={() => handlers.current?.decrement()}
-            disabled={value === min || batchNumber !== undefined}
+            disabled={value === min || batchId !== undefined}
             className={classes.control}
             onMouseDown={(event) => event.preventDefault()}
           >
@@ -53,13 +53,13 @@ function UploadBatchNumberInput({ min = 1 }: UploadBatchNumberInputProps) {
             onChange={setValue}
             classNames={{ input: classes.input }}
             placeholder="1"
-            readOnly={batchNumber !== undefined}
+            readOnly={batchId !== undefined}
           />
 
           <ActionIcon<"button">
             size={28}
             variant="transparent"
-            disabled={batchNumber !== undefined}
+            disabled={batchId !== undefined}
             onClick={() => handlers.current?.increment()}
             className={classes.control}
             onMouseDown={(event) => event.preventDefault()}
@@ -68,10 +68,10 @@ function UploadBatchNumberInput({ min = 1 }: UploadBatchNumberInputProps) {
           </ActionIcon>
         </div>
       </Input.Wrapper>
-      {!batchNumber && (
+      {!batchId && (
         <Button
           onClick={() =>
-            z.number().parse(value) ? setBatchNumber(Number(value)) : null
+            z.number().parse(value) ? setbatchId(Number(value)) : null
           }
         >
           Set
@@ -121,4 +121,4 @@ const useStyles = createStyles((theme) => ({
     flex: 1,
   },
 }));
-export default UploadBatchNumberInput;
+export default UploadBatchIdInput;

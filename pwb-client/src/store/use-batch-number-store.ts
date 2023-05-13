@@ -1,13 +1,13 @@
 import { create } from "zustand";
 
 type Store = {
-  batchNumber: number | undefined;
-  setBatchNumber: (batchNumber: number) => void;
-  resetBatchNumber: () => void;
+  batchId: number | undefined;
+  setBatchId: (batchId: number) => void;
+  resetBatchId: () => void;
 };
 
-export const useBatchNumberStore = create<Store>((set) => ({
-  batchNumber: undefined,
-  setBatchNumber: (batchNumber) => set({ batchNumber }),
-  resetBatchNumber: () => set({ batchNumber: undefined }),
+export const useBatchStore = create<Store>((set) => ({
+  batchId: undefined,
+  setBatchId: (id) => set({ batchId: id }),
+  resetBatchId: () => set({ batchId: undefined }),
 }));

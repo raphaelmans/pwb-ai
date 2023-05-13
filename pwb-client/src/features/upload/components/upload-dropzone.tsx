@@ -5,7 +5,7 @@ import { IconCloudUpload, IconX, IconDownload } from "@tabler/icons-react";
 import { useEvaluate } from "../../../shared/hooks";
 import UploadResult from "./upload-result";
 import { ClassificationResult } from "../../../types";
-import { useBatchNumberStore } from "../../../store";
+import { useBatchStore } from "../../../store";
 import UploadFinishButton from "./upload-finish-button";
 import { useResultStore } from "../../results/store";
 
@@ -38,7 +38,7 @@ const useStyles = createStyles((theme) => ({
 
 function UploadDropzone() {
   const { classes, theme } = useStyles();
-  const batchNumber = useBatchNumberStore((state) => state.batchNumber);
+  const batchId = useBatchStore((state) => state.batchId);
   const incrementResult = useResultStore((state) => state.increment);
 
   const { evaluateImg, isMutating } = useEvaluate();
@@ -57,7 +57,10 @@ function UploadDropzone() {
         reader.onload = () => {
           const dataURI = reader.result;
           evaluateImg({
-            datauri: dataURI as string,
+            data: {
+              datauri: dataURI as string,
+              batch_id: batchId,
+            },
           })
             .then((data) => {
               setResult(data?.data);
@@ -73,7 +76,7 @@ function UploadDropzone() {
     },
     [evaluateImg]
   );
-  if (!batchNumber) {
+  if (!batchId) {
     return null;
   }
   return (
@@ -142,7 +145,7 @@ function UploadDropzone() {
       {result && (
         <UploadResult title="Evaluation Result" result={result} image={image} />
       )}
-      <UploadFinishButton />
+      <UploadFinishButton callback={() => result && setResult(undefined)} />
     </>
   );
 }

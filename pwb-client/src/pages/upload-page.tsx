@@ -1,6 +1,6 @@
 import UploadDropzone from "../features/upload/components/upload-dropzone";
 import { Box, Center, Stack, Text } from "@mantine/core";
-import UploadInputBatchNumber from "../features/upload/components/upload-input-batch-number";
+import UploadInputBatchId from "../features/upload/components/upload-input-batch-number";
 
 const UploadPage = () => {
   return (
@@ -10,7 +10,7 @@ const UploadPage = () => {
           <Text size="xxl" component="h1">
             Upload
           </Text>
-          <UploadInputBatchNumber />
+          <UploadInputBatchId />
           <UploadDropzone />
         </Stack>
       </Center>
