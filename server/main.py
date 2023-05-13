@@ -1,8 +1,7 @@
-import base64
 import datetime
+from typing import List
 from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from sqlalchemy.orm import Session
-import uuid
 from ai_model.ai_model import AIModel
 import crud
 from database import SessionLocal, engine
@@ -36,8 +35,6 @@ async def db_session_middleware(request: Request, call_next):
         request.state.db.close()
     return response
 
-# Dependency
-
 
 def get_db():
     db = SessionLocal()
@@ -50,18 +47,6 @@ def get_db():
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
-
-
-# @app.post("/save_image/")
-# async def save_image(image_data: schemas.ImageData):
-#     # Generate a unique file name if it doesn't exist
-#     file_name = f"{uuid.uuid4()}.png"
-#     save_path = f"images/{file_name}"
-
-#     # Save the image to disk
-#     save_base64_image(image_data.datauri, save_path)
-
-#     return {"message": "Image saved successfully."}
 
 
 @app.post("/evaluate_pwb/")
@@ -79,25 +64,11 @@ async def evaluate_pwb(image_data: schemas.ImageData, db: Session = Depends(get_
     return db_classification_result
 
 
-@app.post("/batch/", response_model=schemas.Batch)
-def create_batch(batch: schemas.BatchCreate, db: Session = Depends(get_db)):
-    db_batch = crud.create_batch(db=db, batch=batch)
-    return db_batch
-
-
 @app.post("/classification_result/", response_model=schemas.ClassificationResult)
 def create_classification_result(classification_result: schemas.ClassificationResultCreate, db: Session = Depends(get_db)):
     db_classification_result = crud.create_classification_result(
         db=db, classification_result=classification_result)
     return db_classification_result
-
-
-@app.get("/batch/{batch_id}", response_model=schemas.Batch)
-def read_batch(batch_id: int, db: Session = Depends(get_db)):
-    db_batch = crud.get_batch(db, batch_id=batch_id)
-    if db_batch is None:
-        raise HTTPException(status_code=404, detail="Batch not found")
-    return db_batch
 
 
 @app.get("/classification_result/{result_id}", response_model=schemas.ClassificationResult)
@@ -110,46 +81,14 @@ def read_classification_result(result_id: int, db: Session = Depends(get_db)):
     return db_classification_result
 
 
-@app.get("/batch/", response_model=list[schemas.Batch])
-def read_batches(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    batches = crud.get_batches(db, skip=skip, limit=limit)
-    return batches
-
-
 @app.get("/classification_result/", response_model=list[schemas.ClassificationResult])
 def read_classification_results(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     results = crud.get_classification_results(db, skip=skip, limit=limit)
     return results
 
-
-@app.post("/result_image/", response_model=schemas.ResultImage)
-def create_result_image(result_id: int, result_image: schemas.ResultImageCreate, db: Session = Depends(get_db)):
-    db_result_image = crud.create_result_image(
-        db=db, result_image=result_image, result_id=result_id)
-    return db_result_image
-
-
-@app.get("/result_images/{result_image_id}", response_model=schemas.ResultImage)
-def read_result_image(result_image_id: int, db: Session = Depends(get_db)):
-    db_result_image = crud.get_result_image(
-        db=db, result_image_id=result_image_id)
-    if db_result_image is None:
-        raise HTTPException(status_code=404, detail="ResultImage not found")
-    return db_result_image
-
-
-@app.get("/classification_results/{result_id}/images", response_model=list[schemas.ResultImage])
-def read_result_images(result_id: int, db: Session = Depends(get_db)):
-    db_result_images = crud.get_result_images(db, result_id=result_id)
-    if db_result_images is None:
-        raise HTTPException(status_code=404, detail="ResultImages not found")
-    return db_result_images
-
-
-@app.delete("/result_images/{result_image_id}", response_model=schemas.ResultImage)
-def delete_result_image(result_image_id: int, db: Session = Depends(get_db)):
-    db_result_image = crud.delete_result_image(
-        db=db, result_image_id=result_image_id)
-    if db_result_image is None:
-        raise HTTPException(status_code=404, detail="ResultImage not found")
-    return db_result_image
+# Get Classification Results by Batch ID
+@app.get("/classification_results/{batch_id}", response_model=List[schemas.ClassificationResult])
+def get_classification_results_by_batch_id(batch_id: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    classification_results = crud.get_classification_results(
+        db, batch_id=batch_id, skip=skip, limit=limit)
+    return classification_results
