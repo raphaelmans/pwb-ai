@@ -6,34 +6,30 @@ import {
   Group,
   rem,
   Image,
+  Code,
 } from "@mantine/core";
 import { ClassificationResult } from "../../../types";
-
+import { useResultStore } from "../../results/store";
+import { shallow } from "zustand/shallow";
 interface UploadResultProps {
   title: string;
   result: ClassificationResult;
-  stats: {
-    value: number;
-    label: string;
-  }[];
   image?: string;
 }
 
 function UploadResult({
   title,
   result: { class_name: condition, probability: confidence },
-  stats,
   image,
 }: UploadResultProps) {
-  const { classes, theme } = useStyles();
-  const items = stats.map((stat) => (
-    <div key={stat.label}>
-      <Text className={classes.label}>{stat.value}</Text>
-      <Text size="xs" color="dimmed">
-        {stat.label}
-      </Text>
-    </div>
-  ));
+  const { good, noGood, totalCount } = useResultStore((state) => {
+    return {
+      good: state.good,
+      noGood: state.noGood,
+      totalCount: state.totalCount,
+    };
+  }, shallow);
+  const { classes } = useStyles();
   const total = 1;
 
   return (
@@ -51,7 +47,7 @@ function UploadResult({
           <Group>
             <div>
               <Text className={classes.lead} mt={30}>
-                1
+                {totalCount}
               </Text>
               <Text fz="xs" color="dimmed">
                 Item #
@@ -71,7 +67,21 @@ function UploadResult({
             </div>
           </Group>
 
-          <Group mt="lg">{items}</Group>
+          <Group mt="lg">
+            <div>
+              <Text className={classes.label} size="sm">
+                {good}
+              </Text>
+              <Code color="green">Good</Code>
+            </div>
+
+            <div>
+              <Text className={classes.label} size="sm">
+                {noGood}
+              </Text>
+              <Code color="red">No Good</Code>
+            </div>
+          </Group>
         </div>
 
         <div className={classes.ring}>

@@ -7,6 +7,7 @@ import UploadResult from "./upload-result";
 import { ClassificationResult } from "../../../types";
 import { useBatchNumberStore } from "../../../store";
 import UploadFinishButton from "./upload-finish-button";
+import { useResultStore } from "../../results/store";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -38,6 +39,8 @@ const useStyles = createStyles((theme) => ({
 function UploadDropzone() {
   const { classes, theme } = useStyles();
   const batchNumber = useBatchNumberStore((state) => state.batchNumber);
+  const incrementResult = useResultStore((state) => state.increment);
+
   const { evaluateImg, isMutating } = useEvaluate();
   const [result, setResult] = useState<ClassificationResult | undefined>();
   const [image, setImage] = useState<string | undefined>(undefined);
@@ -56,7 +59,12 @@ function UploadDropzone() {
           evaluateImg({
             datauri: dataURI as string,
           })
-            .then((data) => setResult(data?.data))
+            .then((data) => {
+              setResult(data?.data);
+              if (data?.data.class_name) {
+                incrementResult(data?.data.class_name);
+              }
+            })
             .finally(() => {
               setImage(dataURI as string);
             });
@@ -132,28 +140,9 @@ function UploadDropzone() {
         </Button>
       </div>
       {result && (
-        <UploadResult
-          title="Evaluation Result"
-          result={result}
-          image={image}
-          stats={[
-            {
-              label: "Batch Number",
-              value: 1,
-            },
-            {
-              label: "Batch Items",
-              value: 2,
-            },
-            {
-              label: "Total Items",
-              value: 100,
-            },
-          ]}
-        />
+        <UploadResult title="Evaluation Result" result={result} image={image} />
       )}
       <UploadFinishButton />
-
     </>
   );
 }
