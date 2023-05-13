@@ -17,7 +17,7 @@ const useStyles = createStyles((theme) => ({
 
   dropzone: {
     borderWidth: rem(1),
-    paddingBottom: rem(50),
+    paddingBottom: rem(75),
   },
 
   icon: {
@@ -31,7 +31,7 @@ const useStyles = createStyles((theme) => ({
     position: "absolute",
     width: rem(250),
     left: `calc(50% - ${rem(125)})`,
-    bottom: 5,
+    bottom: theme.spacing.lg,
   },
 }));
 
@@ -153,6 +153,7 @@ function UploadDropzone() {
         />
       )}
       <UploadFinishButton />
+
     </>
   );
 }

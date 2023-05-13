@@ -5,7 +5,16 @@ const UploadFinishButton = () => {
   const resetBatchNumber = useBatchNumberStore(
     (state) => state.resetBatchNumber
   );
-  return <Button variant="light" onClick={resetBatchNumber}>Finish</Button>;
+  return (
+    <Button
+      variant="subtle"
+      onClick={resetBatchNumber}
+      w="fit-content"
+      ml="auto"
+    >
+      Finish
+    </Button>
+  );
 };
 
 export default UploadFinishButton;
