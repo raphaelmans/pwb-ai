@@ -1,8 +1,8 @@
 import { create } from "zustand";
 
 type Store = {
-  batchId: number | undefined;
-  setBatchId: (batchId: number) => void;
+  batchId: string | undefined;
+  setBatchId: (batchId: string) => void;
   resetBatchId: () => void;
 };
 

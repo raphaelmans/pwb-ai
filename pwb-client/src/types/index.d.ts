@@ -5,7 +5,7 @@ export type AppRoute = (typeof APP_ROUTES)[number];
 
 export type ClassificationResult = {
   id: number;
-  class_name: string;
+  class_name: PWBLabel;
   batch_id: string;
   created_at: string;
   probability: number;

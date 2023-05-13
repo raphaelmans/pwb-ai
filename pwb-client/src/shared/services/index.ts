@@ -5,7 +5,7 @@ import baseFetcher from "../api";
 
 type ResultImage = {
   datauri: string;
-  batch_id?: number;
+  batch_id?: string;
 };
 
 const ResultImageRoutes = {

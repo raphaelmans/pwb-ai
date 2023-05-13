@@ -57,10 +57,13 @@ async def evaluate_pwb(image_data: schemas.ImageData, db: Session = Depends(get_
     result = ai_model.classify(image)
     evaluation = ai_model.evaluate(result)
 
+    img_bytes = ImageUtils.convert_image_to_base64(image)
     result = schemas.ClassificationResultCreate(
-        class_name=evaluation["label"], probability=evaluation["probability"], created_at=datetime.datetime.now(), batch_id=image_data.batch_id)
+        class_name=evaluation["label"], probability=evaluation["probability"], created_at=datetime.datetime.now(), batch_id=image_data.batch_id,
+        image_data=img_bytes)
     db_classification_result = crud.create_classification_result(
-        db=db, classification_result=result)
+        db=db, classification_result=result
+    )
     return db_classification_result
 
 
@@ -81,10 +84,11 @@ def read_classification_result(result_id: int, db: Session = Depends(get_db)):
     return db_classification_result
 
 
-@app.get("/classification_result/", response_model=list[schemas.ClassificationResult])
+@app.get("/classification_result/", response_model=List[schemas.ClassificationResult])
 def read_classification_results(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     results = crud.get_classification_results(db, skip=skip, limit=limit)
-    return results
+    return [schemas.ClassificationResult.from_orm(result) for result in results]
+
 
 # Get Classification Results by Batch ID
 @app.get("/classification_results/{batch_id}", response_model=List[schemas.ClassificationResult])
