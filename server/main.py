@@ -15,7 +15,8 @@ app_models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 # Set up CORS
-origins = ["http://localhost", "http://localhost:3000","http://localhost:5173", "http://localhost:8080", "http://127.0.0.1:3000", "http://127.0.0.1:8080"]
+origins = ["http://localhost", "http://localhost:3000", "http://localhost:5173",
+           "http://localhost:8080", "http://127.0.0.1:3000", "http://127.0.0.1:8080"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -23,6 +24,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 @app.middleware("http")
 async def db_session_middleware(request: Request, call_next):
@@ -63,15 +65,17 @@ async def root():
 
 
 @app.post("/evaluate_pwb/")
-async def evaluate_pwb(image_data: schemas.ImageData,db: Session = Depends(get_db)):
+async def evaluate_pwb(image_data: schemas.ImageData, db: Session = Depends(get_db)):
     # Save the image to disk
     image = ImageUtils.read_base64_image(image_data.datauri)
     ai_model = AIModel()
     result = ai_model.classify(image)
     evaluation = ai_model.evaluate(result)
-    result = schemas.ClassificationResultCreate(class_name=evaluation["label"], probability=evaluation["probability"], created_at=datetime.datetime.now(),batch_id=1)
+
+    result = schemas.ClassificationResultCreate(
+        class_name=evaluation["label"], probability=evaluation["probability"], created_at=datetime.datetime.now(), batch_id=image_data.batch_id)
     db_classification_result = crud.create_classification_result(
-            db=db, classification_result=result)
+        db=db, classification_result=result)
     return db_classification_result
 
 

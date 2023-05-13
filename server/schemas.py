@@ -1,9 +1,10 @@
 from typing import List, Optional
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class ImageData(BaseModel):
     datauri: str
+    batch_id: int = Field(default=1, title="Batch ID")
     
 class ResultImageBase(BaseModel):
     image_data: bytes
