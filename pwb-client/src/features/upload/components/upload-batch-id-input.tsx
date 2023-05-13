@@ -1,7 +1,13 @@
 import { useState } from "react";
-import { TextInput, createStyles, rem, Stack, Button } from "@mantine/core";
+import {
+  TextInput,
+  Box,
+  createStyles,
+  rem,
+  Stack,
+  Button,
+} from "@mantine/core";
 import { useBatchStore } from "../../../store";
-import z from "zod";
 
 function UploadBatchIdInput() {
   const [focused, setFocused] = useState(false);
@@ -17,29 +23,34 @@ function UploadBatchIdInput() {
     };
   });
 
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log(
+      "🚀 ~ file: upload-batch-id-input.tsx:31 ~ handleSubmit ~ value:",
+      value
+    );
+    setbatchId(value);
+  };
   return (
-    <Stack w={500}>
-      <TextInput
-        label="Batch ID"
-        placeholder="Enter an identifier for this batch"
-        required
-        classNames={classes}
-        value={value}
-        onChange={(event) => setValue(event.currentTarget.value)}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        mt="md"
-        autoComplete="nope"
-        disabled={batchId !== undefined}
-      />
-      {!batchId && (
-        <Button
-          onClick={() => (z.string().parse(value) ? setbatchId(value) : null)}
-        >
-          Set
-        </Button>
-      )}
-    </Stack>
+    <Box component="form" onSubmit={handleSubmit}>
+      <Stack w={500}>
+        <TextInput
+          label="Batch ID"
+          placeholder="Enter an identifier for this batch"
+          required
+          classNames={classes}
+          value={value}
+          onChange={(event) => setValue(event.currentTarget.value)}
+          name="batchId"
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          mt="md"
+          autoComplete="nope"
+          disabled={batchId !== undefined}
+        />
+        {!batchId && <Button type="submit">Set</Button>}
+      </Stack>
+    </Box>
   );
 }
 

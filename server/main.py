@@ -84,6 +84,11 @@ def read_classification_result(result_id: int, db: Session = Depends(get_db)):
     return db_classification_result
 
 
+@app.get("/classification_counts")
+def get_classification_counts_endpoint(db: Session = Depends(get_db)):
+    counts = crud.get_classification_counts(db)
+    return counts
+
 @app.get("/classification_result/", response_model=List[schemas.ClassificationResult])
 def read_classification_results(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     results = crud.get_classification_results(db, skip=skip, limit=limit)

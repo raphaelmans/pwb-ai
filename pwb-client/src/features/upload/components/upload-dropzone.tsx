@@ -55,6 +55,11 @@ function UploadDropzone() {
         reader.readAsDataURL(file);
 
         reader.onload = () => {
+          console.log(
+            "🚀 ~ file: upload-dropzone.tsx:64 ~ UploadDropzone ~ batchId:",
+            batchId
+          );
+
           const dataURI = reader.result;
           evaluateImg({
             data: {
@@ -74,7 +79,7 @@ function UploadDropzone() {
         };
       }
     },
-    [evaluateImg]
+    [evaluateImg, batchId, incrementResult]
   );
   if (!batchId) {
     return null;

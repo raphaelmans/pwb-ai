@@ -4,6 +4,7 @@ import RootApp from "./root-app.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CameraPage from "./pages/camera-page.tsx";
 import UploadPage from "./pages/upload-page.tsx";
+import DashboardPage from "./pages/dashboard-page.tsx";
 
 const router = createBrowserRouter([
   {
@@ -12,6 +13,10 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
+        element: <DashboardPage />,
+      },
+      {
+        path: "/real-time",
         element: <CameraPage />,
       },
       {

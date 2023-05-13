@@ -1,9 +1,12 @@
 import useSWRMutation from "swr/mutation";
-import { ResultImageRoutes, evaluateMutation } from "../services";
+import {
+  APIRoutes,
+  evaluateMutation, 
+} from "../services";
 
 export const useEvaluate = () => {
   const { trigger: evaluateImg, isMutating } = useSWRMutation(
-    ResultImageRoutes.evaluatePWB,
+    APIRoutes.evaluatePWB,
     evaluateMutation,
     {
       revalidate: true,
@@ -15,3 +18,4 @@ export const useEvaluate = () => {
     isMutating,
   };
 };
+
