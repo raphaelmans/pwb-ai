@@ -3,7 +3,6 @@ import { Box, Center, Stack, Text } from "@mantine/core";
 import UploadInputBatchNumber from "../features/upload/components/upload-input-batch-number";
 
 const UploadPage = () => {
-  const onBatchNumberSet = () => {};
   return (
     <Box h="100vh">
       <Center>
@@ -11,8 +10,7 @@ const UploadPage = () => {
           <Text size="xxl" component="h1">
             Upload
           </Text>
-          <UploadInputBatchNumber setCallback={onBatchNumberSet} />
-          {/* <UploadImageContainer /> */}
+          <UploadInputBatchNumber />
           <UploadDropzone />
         </Stack>
       </Center>

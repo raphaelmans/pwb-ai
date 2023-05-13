@@ -5,6 +5,8 @@ import { IconCloudUpload, IconX, IconDownload } from "@tabler/icons-react";
 import { useEvaluate } from "../../../shared/hooks";
 import UploadResult from "./upload-result";
 import { ClassificationResult } from "../../../types";
+import { useBatchNumberStore } from "../../../store";
+import UploadFinishButton from "./upload-finish-button";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -35,6 +37,7 @@ const useStyles = createStyles((theme) => ({
 
 function UploadDropzone() {
   const { classes, theme } = useStyles();
+  const batchNumber = useBatchNumberStore((state) => state.batchNumber);
   const { evaluateImg, isMutating } = useEvaluate();
   const [result, setResult] = useState<ClassificationResult | undefined>();
   const [image, setImage] = useState<string | undefined>(undefined);
@@ -62,6 +65,9 @@ function UploadDropzone() {
     },
     [evaluateImg]
   );
+  if (!batchNumber) {
+    return null;
+  }
   return (
     <>
       <div className={classes.wrapper}>
@@ -146,6 +152,7 @@ function UploadDropzone() {
           ]}
         />
       )}
+      <UploadFinishButton />
     </>
   );
 }

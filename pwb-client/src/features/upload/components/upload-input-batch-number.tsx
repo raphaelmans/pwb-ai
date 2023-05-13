@@ -10,7 +10,76 @@ import {
   Button,
 } from "@mantine/core";
 import { IconPlus, IconMinus } from "@tabler/icons-react";
+import { useBatchNumberStore } from "../../../store";
+import z from "zod";
 
+interface UploadBatchNumberInputProps {
+  min?: number;
+  max?: number;
+}
+
+function UploadBatchNumberInput({ min = 1 }: UploadBatchNumberInputProps) {
+  const { classes } = useStyles();
+
+  const { setBatchNumber, batchNumber } = useBatchNumberStore((state) => {
+    return {
+      setBatchNumber: state.setBatchNumber,
+      batchNumber: state.batchNumber,
+    };
+  });
+  const handlers = useRef<NumberInputHandlers>(null);
+  const [value, setValue] = useState<number | "">(1);
+
+  return (
+    <Stack w={500}>
+      <Input.Wrapper label="Batch Number">
+        <div className={classes.wrapper}>
+          <ActionIcon<"button">
+            size={28}
+            variant="transparent"
+            onClick={() => handlers.current?.decrement()}
+            disabled={value === min || batchNumber !== undefined}
+            className={classes.control}
+            onMouseDown={(event) => event.preventDefault()}
+          >
+            <IconMinus size="1rem" stroke={1.5} />
+          </ActionIcon>
+
+          <NumberInput
+            variant="unstyled"
+            min={min}
+            handlersRef={handlers}
+            value={value}
+            onChange={setValue}
+            classNames={{ input: classes.input }}
+            placeholder="1"
+            readOnly={batchNumber !== undefined}
+          />
+
+          <ActionIcon<"button">
+            size={28}
+            variant="transparent"
+            disabled={batchNumber !== undefined}
+            onClick={() => handlers.current?.increment()}
+            className={classes.control}
+            onMouseDown={(event) => event.preventDefault()}
+          >
+            <IconPlus size="1rem" stroke={1.5} />
+          </ActionIcon>
+        </div>
+      </Input.Wrapper>
+      {!batchNumber && (
+        <Button
+          onClick={() =>
+            z.number().parse(value) ? setBatchNumber(Number(value)) : null
+          }
+        >
+          Set
+        </Button>
+      )}
+    </Stack>
+  );
+}
 const useStyles = createStyles((theme) => ({
   wrapper: {
     display: "flex",
@@ -52,62 +121,4 @@ const useStyles = createStyles((theme) => ({
     flex: 1,
   },
 }));
-
-interface UploadBatchNumberInputProps {
-  min?: number;
-  max?: number;
-  setCallback: (value: number) => void;
-}
-
-function UploadBatchNumberInput({
-  min = 1,
-  max = 10,
-}: UploadBatchNumberInputProps) {
-  const { classes } = useStyles();
-  const handlers = useRef<NumberInputHandlers>(null);
-  const [value, setValue] = useState<number | "">(1);
-
-  return (
-    <Stack>
-      <Input.Wrapper label="Batch Number">
-        <div className={classes.wrapper}>
-          <ActionIcon<"button">
-            size={28}
-            variant="transparent"
-            onClick={() => handlers.current?.decrement()}
-            disabled={value === min}
-            className={classes.control}
-            onMouseDown={(event) => event.preventDefault()}
-          >
-            <IconMinus size="1rem" stroke={1.5} />
-          </ActionIcon>
-
-          <NumberInput
-            variant="unstyled"
-            min={min}
-            max={max}
-            handlersRef={handlers}
-            value={value}
-            onChange={setValue}
-            classNames={{ input: classes.input }}
-            placeholder="1"
-          />
-
-          <ActionIcon<"button">
-            size={28}
-            variant="transparent"
-            onClick={() => handlers.current?.increment()}
-            disabled={value === max}
-            className={classes.control}
-            onMouseDown={(event) => event.preventDefault()}
-          >
-            <IconPlus size="1rem" stroke={1.5} />
-          </ActionIcon>
-        </div>
-      </Input.Wrapper>
-      <Button>Set</Button>
-    </Stack>
-  );
-}
-
 export default UploadBatchNumberInput;
