@@ -11,8 +11,11 @@ function RootApp() {
           <Box
             sx={{
               flex: 1,
+              overflow: "auto",
+
             }}
             w="100%"
+            mah="100vh"
           >
             <BaseLayout>
               <Outlet />
