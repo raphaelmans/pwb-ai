@@ -48,42 +48,37 @@ function UploadDropzone() {
   const openRef = useRef<() => void>(null);
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      if (acceptedFiles.length === 1) {
-        const file = acceptedFiles[0];
+      acceptedFiles.forEach((file) => {
+        if (file) {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
 
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-
-        reader.onload = () => {
-          console.log(
-            "🚀 ~ file: upload-dropzone.tsx:64 ~ UploadDropzone ~ batchId:",
-            batchId
-          );
-
-          const dataURI = reader.result;
-          evaluateImg({
-            data: {
-              datauri: dataURI as string,
-              batch_id: batchId,
-            },
-          })
-            .then((data) => {
-              if (data?.data.class_name) {
-                incrementResult(data?.data.class_name);
-                setResults((r) => {
-                  if (r) {
-                    return [...r, data.data];
-                  } else {
-                    return [data.data];
-                  }
-                });
-              }
+          reader.onload = () => {
+            const dataURI = reader.result;
+            evaluateImg({
+              data: {
+                datauri: dataURI as string,
+                batch_id: batchId,
+              },
             })
-            .finally(() => {
-              setImages((imgs) => [...imgs, dataURI as string]);
-            });
-        };
-      }
+              .then((data) => {
+                if (data?.data.class_name) {
+                  incrementResult(data?.data.class_name);
+                  setResults((r) => {
+                    if (r) {
+                      return [...r, data.data];
+                    } else {
+                      return [data.data];
+                    }
+                  });
+                }
+              })
+              .finally(() => {
+                setImages((imgs) => [...imgs, dataURI as string]);
+              });
+          };
+        }
+      });
     },
     [evaluateImg, batchId, incrementResult]
   );
@@ -100,7 +95,7 @@ function UploadDropzone() {
           radius="md"
           accept={[MIME_TYPES.jpeg, MIME_TYPES.png, "image/bmp"]}
           maxSize={30 * 1024 ** 2}
-          maxFiles={1}
+          maxFiles={5}
           loading={isMutating}
         >
           <div style={{ pointerEvents: "none" }}>
@@ -138,7 +133,7 @@ function UploadDropzone() {
               <Dropzone.Idle>Upload Image</Dropzone.Idle>
             </Text>
             <Text ta="center" fz="sm" mt="xs" c="dimmed">
-              Drag&apos;n&apos;drop image here to upload.
+              Drag&apos;n&apos;drop image here to upload. Max 5 images
             </Text>
           </div>
         </Dropzone>
