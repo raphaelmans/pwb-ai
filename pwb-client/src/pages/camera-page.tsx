@@ -7,7 +7,7 @@ const CameraPage = () => {
       <Center>
         <Stack>
           <Text size="xxl" component="h1">
-            Home
+            Real Time
           </Text>
           <AppCamera />
         </Stack>

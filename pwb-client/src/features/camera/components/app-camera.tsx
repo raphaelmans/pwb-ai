@@ -1,14 +1,14 @@
-import { Button, Image, Stack } from "@mantine/core";
-import React, { useCallback } from "react";
+import { Button, Image, Stack, NativeSelect, Skeleton } from "@mantine/core";
+import React, { useCallback, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { BASE_DIMENSIONS, videoConstraints } from "../constants";
 import { useEvaluate } from "../../../shared/hooks";
 
-
 const AppCamera = () => {
-  const [base64Img, setBase64Img] = React.useState<string | null>(null);
-  const [devices, setDevices] = React.useState<MediaDeviceInfo[]>([]);
-  const webcamRef = React.useRef<Webcam>(null);
+  const [base64Img, setBase64Img] = useState<string | null>(null);
+  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
+  const webcamRef = useRef<Webcam>(null);
+  const [cameraId, setCameraId] = useState<string | null>(null);
 
   const { evaluateImg, isMutating } = useEvaluate();
 
@@ -27,7 +27,9 @@ const AppCamera = () => {
 
       if (imageSrc) {
         await evaluateImg({
-          datauri: imageSrc,
+          data: {
+            datauri: imageSrc,
+          },
         });
         setBase64Img(imageSrc);
       }
@@ -38,7 +40,8 @@ const AppCamera = () => {
   }, [handleDevices]);
   return (
     <Stack w="100%">
-      {devices.map((device, key) => (
+      {(!cameraId || cameraId === "null") && <Skeleton height={400} w={700} />}
+      {cameraId && cameraId !== "null" && (
         <Webcam
           audio={false}
           height={400}
@@ -46,15 +49,31 @@ const AppCamera = () => {
           screenshotFormat="image/png"
           videoConstraints={{
             ...videoConstraints,
-            deviceId: device.deviceId,
+            deviceId: cameraId,
           }}
-          key={key}
         />
-      ))}
+      )}
+      <NativeSelect
+        label="Use Camera"
+        data={[
+          {
+            value: "null",
+            label: "Select Camera",
+          },
+          ...devices.map((item) => ({
+            value: item.deviceId,
+            label: item.label,
+          })),
+        ]}
+        onChange={(event) => setCameraId(event.currentTarget.value)}
+      />
+
       {base64Img && <Image src={base64Img} />}
-      <Button onClick={onCapture} loading={isMutating}>
-        Capture photo
-      </Button>
+      {cameraId && cameraId !== "null" && (
+        <Button onClick={onCapture} loading={isMutating}>
+          Capture photo
+        </Button>
+      )}
     </Stack>
   );
 };
