@@ -8,7 +8,7 @@ import {
   SimpleGrid,
   rem,
 } from "@mantine/core";
-import { IconArrowUpRight, IconDeviceAnalytics } from "@tabler/icons-react";
+import { IconDeviceAnalytics } from "@tabler/icons-react";
 import useSWR from "swr";
 import { APIRoutes, APIService } from "../../../shared/services";
 
@@ -30,13 +30,13 @@ export function DashboardStats() {
     {
       label: "Good",
       count: stats.totalGood.toString(),
-      part: (stats.totalGood / stats.totalCount) * 100,
+      part: Number(((stats.totalGood / stats.totalCount) * 100).toFixed(2)),
       color: "green.5",
     },
     {
       label: "No Good",
       count: stats.totalNoGood.toString(),
-      part: (stats.totalNoGood / stats.totalCount) * 100,
+      part: Number(((stats.totalNoGood / stats.totalCount) * 100).toFixed(2)),
       color: "red.5",
     },
   ];
@@ -44,7 +44,7 @@ export function DashboardStats() {
   const segments = statsUI.map((segment) => ({
     value: segment.part,
     color: segment.color,
-    label: segment.part > 10 ? `${segment.part}%` : undefined,
+    label: segment.part > 10 ? `${segment.part.toFixed(2)}%` : undefined,
   }));
 
   const descriptions = statsUI.map((stat) => (

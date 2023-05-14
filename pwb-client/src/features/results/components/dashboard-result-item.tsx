@@ -27,7 +27,9 @@ export function DashboardResultItem({ data }: DashboardResultItemProps) {
     <Card p="lg" shadow="lg" className={classes.card} radius="md" component="a">
       <div
         className={classes.image}
-        style={{ backgroundImage: `url(data:image/jpeg;base64,${data.image_data})` }}
+        style={{
+          backgroundImage: `url(data:image/jpeg;base64,${data.image_data})`,
+        }}
       />
       <div className={classes.overlay} />
 
@@ -53,7 +55,7 @@ export function DashboardResultItem({ data }: DashboardResultItemProps) {
                   color={theme.colors.dark[2]}
                 />
                 <Text size="sm" className={classes.bodyText}>
-                  PWB-1
+                  {data.batch_id}
                 </Text>
               </Center>
               <Center>

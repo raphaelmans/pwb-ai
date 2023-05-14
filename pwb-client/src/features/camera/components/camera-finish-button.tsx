@@ -1,12 +1,12 @@
 import { Button } from "@mantine/core";
-import { useBatchStore } from "../../../store";
 import { useResultStore } from "../../results/store";
+import { useCameraBatchIdStore } from "../store";
 
 type Props = {
   callback?: () => void;
 };
-const UploadFinishButton = ({ callback }: Props) => {
-  const resetBatchId = useBatchStore((state) => state.resetBatchId);
+const CameraFinishButton = ({ callback }: Props) => {
+  const resetBatchId = useCameraBatchIdStore((state) => state.resetBatchId);
   const resetResults = useResultStore((state) => state.reset);
 
   const handleFinish = () => {
@@ -24,4 +24,4 @@ const UploadFinishButton = ({ callback }: Props) => {
   );
 };
 
-export default UploadFinishButton;
+export default CameraFinishButton;

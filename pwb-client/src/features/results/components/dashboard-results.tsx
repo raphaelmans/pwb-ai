@@ -6,7 +6,7 @@ const DashboardResults = () => {
 
   const resultsData = results?.data;
   return (
-    <Stack>
+    <Stack pb="lg">
       <LoadingOverlay visible={isLoading} overlayBlur={2} />
       {resultsData?.map((item) => (
         <DashboardResultItem data={item} />

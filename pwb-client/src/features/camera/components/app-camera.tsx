@@ -1,4 +1,4 @@
-import { Button, Image, Stack, NativeSelect, Skeleton } from "@mantine/core";
+import { Button, Stack, NativeSelect, Skeleton } from "@mantine/core";
 import React, { useCallback, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { BASE_DIMENSIONS, videoConstraints } from "../constants";
@@ -6,16 +6,19 @@ import { useEvaluate } from "../../../shared/hooks";
 import { useCameraBatchIdStore } from "../store";
 import CameraResult from "./camera-result";
 import { ClassificationResult } from "../../../types";
+import CameraFinishButton from "./camera-finish-button";
+import { useResultStore } from "../../results/store";
 
 const AppCamera = () => {
   const cameraBatchId = useCameraBatchIdStore((state) => state.batchId);
-  const [result, setResult] = useState<ClassificationResult | undefined>(
+  const [results, setResults] = useState<ClassificationResult[] | undefined>(
     undefined
   );
-  const [base64Img, setBase64Img] = useState<string | undefined>(undefined);
+  const [base64Imgs, setBase64Imgs] = useState<string[]>([]);
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const webcamRef = useRef<Webcam>(null);
   const [cameraId, setCameraId] = useState<string | null>(null);
+  const incrementResult = useResultStore((state) => state.increment);
 
   const { evaluateImg, isMutating } = useEvaluate();
 
@@ -39,13 +42,20 @@ const AppCamera = () => {
             batch_id: cameraBatchId,
           },
         });
-        setBase64Img(imageSrc);
+        setBase64Imgs((imgs) => [...imgs, imageSrc]);
         if (res?.data) {
-          setResult(res.data);
+          incrementResult(res.data.class_name);
+          setResults((state) => {
+            if (state) {
+              return [...state, res.data];
+            } else {
+              return [res.data];
+            }
+          });
         }
       }
     }
-  }, [webcamRef, evaluateImg, setResult, cameraBatchId]);
+  }, [webcamRef, evaluateImg, setResults, cameraBatchId, incrementResult]);
   React.useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then(handleDevices);
   }, [handleDevices]);
@@ -86,8 +96,21 @@ const AppCamera = () => {
           Capture photo
         </Button>
       )}
+      <CameraFinishButton
+        callback={() => {
+          setResults(undefined);
+          setBase64Imgs([]);
+          setCameraId(null);
+        }}
+      />
 
-      {result && <CameraResult image={base64Img} result={result} />}
+      {results?.map((result, i) => (
+        <CameraResult
+          itemNumber={i + 1}
+          image={base64Imgs[i]}
+          result={result}
+        />
+      ))}
     </Stack>
   );
 };

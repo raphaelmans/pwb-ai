@@ -14,17 +14,18 @@ import { shallow } from "zustand/shallow";
 interface CameraResultProps {
   result: ClassificationResult;
   image?: string;
+  itemNumber: number;
 }
 
 function CameraResult({
   result: { id, class_name: condition, probability: confidence },
   image,
+  itemNumber,
 }: CameraResultProps) {
-  const { good, noGood, totalCount } = useResultStore((state) => {
+  const { good, noGood } = useResultStore((state) => {
     return {
       good: state.good,
       noGood: state.noGood,
-      totalCount: state.totalCount,
     };
   }, shallow);
   const { classes } = useStyles();
@@ -50,7 +51,7 @@ function CameraResult({
           <Group>
             <div>
               <Text className={classes.lead} mt={30}>
-                {totalCount}
+                {itemNumber}
               </Text>
               <Text fz="xs" color="dimmed">
                 Item #
