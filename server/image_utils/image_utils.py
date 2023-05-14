@@ -5,6 +5,7 @@ import os
 from PIL import Image
 import numpy as np
 
+
 class ImageUtils:
 
     @staticmethod
@@ -15,7 +16,7 @@ class ImageUtils:
         image = Image.open(BytesIO(image_bytes))
 
         return image
-    
+
     @staticmethod
     def save_base64_image(base64_string: str, save_path: str) -> str:
         # Decode the base64 string to bytes
@@ -35,6 +36,8 @@ class ImageUtils:
     @staticmethod
     def convert_image_to_base64(image: Image.Image) -> str:
         # Resize the image to the desired dimensions
+        if image.mode == 'RGBA':
+            image = image.convert('RGB')
         resized_image = image.resize((256, 160))
 
         image_bytes = BytesIO()
@@ -46,7 +49,7 @@ class ImageUtils:
         image_bytes.seek(0)
 
         # Encode the image bytes as Base64
-        encoded_image = base64.b64encode(image_bytes.getvalue()).decode("utf-8")
+        encoded_image = base64.b64encode(
+            image_bytes.getvalue()).decode("utf-8")
 
         return encoded_image
-    

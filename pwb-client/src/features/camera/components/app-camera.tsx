@@ -3,9 +3,16 @@ import React, { useCallback, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { BASE_DIMENSIONS, videoConstraints } from "../constants";
 import { useEvaluate } from "../../../shared/hooks";
+import { useCameraBatchIdStore } from "../store";
+import CameraResult from "./camera-result";
+import { ClassificationResult } from "../../../types";
 
 const AppCamera = () => {
-  const [base64Img, setBase64Img] = useState<string | null>(null);
+  const cameraBatchId = useCameraBatchIdStore((state) => state.batchId);
+  const [result, setResult] = useState<ClassificationResult | undefined>(
+    undefined
+  );
+  const [base64Img, setBase64Img] = useState<string | undefined>(undefined);
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const webcamRef = useRef<Webcam>(null);
   const [cameraId, setCameraId] = useState<string | null>(null);
@@ -26,20 +33,26 @@ const AppCamera = () => {
       });
 
       if (imageSrc) {
-        await evaluateImg({
+        const res = await evaluateImg({
           data: {
             datauri: imageSrc,
+            batch_id: cameraBatchId,
           },
         });
         setBase64Img(imageSrc);
+        if (res?.data) {
+          setResult(res.data);
+        }
       }
     }
-  }, [webcamRef, evaluateImg, setBase64Img]);
+  }, [webcamRef, evaluateImg, setResult, cameraBatchId]);
   React.useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then(handleDevices);
   }, [handleDevices]);
+
+  if (!cameraBatchId) return null;
   return (
-    <Stack w="100%">
+    <Stack w="100%" pb="lg">
       {(!cameraId || cameraId === "null") && <Skeleton height={400} w={700} />}
       {cameraId && cameraId !== "null" && (
         <Webcam
@@ -68,12 +81,13 @@ const AppCamera = () => {
         onChange={(event) => setCameraId(event.currentTarget.value)}
       />
 
-      {base64Img && <Image src={base64Img} />}
       {cameraId && cameraId !== "null" && (
         <Button onClick={onCapture} loading={isMutating}>
           Capture photo
         </Button>
       )}
+
+      {result && <CameraResult image={base64Img} result={result} />}
     </Stack>
   );
 };
