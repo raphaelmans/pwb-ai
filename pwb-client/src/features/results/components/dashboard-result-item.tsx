@@ -80,7 +80,7 @@ export function DashboardResultItem({ data }: DashboardResultItemProps) {
                   color={theme.colors.dark[2]}
                 />
                 <Text size="sm" className={classes.bodyText}>
-                  {format(new Date("2023-05-14T04:44:41"), "PPpp")}
+                  {format(new Date(data.created_at), "PPpp")}
                 </Text>
               </Center>
             </Group>
