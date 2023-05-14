@@ -2,6 +2,7 @@ import {
   IconCalendarTime,
   IconCircleCheck,
   IconPackage,
+  IconCircleX
 } from "@tabler/icons-react";
 import {
   Card,
@@ -36,16 +37,30 @@ export function DashboardResultItem({ data }: DashboardResultItemProps) {
       <div className={classes.content}>
         <div>
           <Group position="apart" spacing="xs">
-            <Center>
-              <IconCircleCheck
-                size="1rem"
-                stroke={1.5}
-                color={theme.colors.green[5]}
-              />
-              <Text ml="xs" size="sm" color="green.2">
-                Good
-              </Text>
-            </Center>
+            {data.class_name === "GOOD" && (
+              <Center>
+                <IconCircleCheck
+                  size="1rem"
+                  stroke={1.5}
+                  color={theme.colors.green[5]}
+                />
+                <Text ml="xs" size="sm" color="green.2">
+                  Good
+                </Text>
+              </Center>
+            )}
+               {data.class_name === "NO GOOD" && (
+              <Center>
+                <IconCircleX
+                  size="1rem"
+                  stroke={1.5}
+                  color={theme.colors.red[5]}
+                />
+                <Text ml="xs" size="sm" color="red.2">
+                  No Good
+                </Text>
+              </Center>
+            )}
 
             <Group spacing="lg">
               <Center>
