@@ -60,7 +60,7 @@ export function DashboardStats() {
       <Group position="apart" align="flex-end" spacing={0}>
         <Text fw={700}>{stat.count}</Text>
         <Text c={stat.color} fw={700} size="sm" className={classes.statCount}>
-          {stat.part}%
+          {isNaN(stat.part) ? 0 : stat.part}%
         </Text>
       </Group>
     </Box>

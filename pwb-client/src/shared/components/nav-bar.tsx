@@ -5,13 +5,12 @@ import {
   Code,
   getStylesRef,
   rem,
+  Avatar,
 } from "@mantine/core";
 import { IconVideo, IconFileUpload, IconDashboard } from "@tabler/icons-react";
 import { AppRoute } from "../../types";
 import { Link } from "react-router-dom";
-import {
-  useLocation,
-} from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
   navbar: {
@@ -128,7 +127,8 @@ export function NavbarSimpleColored() {
       className={classes.navbar}
     >
       <Navbar.Section grow>
-        <Group className={classes.header} position="apart">
+        <Group className={classes.header}>
+          <Avatar src={"/public/logo.png"} />
           <Code className={classes.version}>PWB - Condition Classifier</Code>
         </Group>
         {links}
