@@ -70,4 +70,9 @@ export type EvaluationResult = {
   result: ClassificationResult;
 };
 
-export { saveImageMutation, evaluateMutation, APIService, APIRoutes };
+export {
+  saveImageMutation,
+  evaluateMutation,
+  APIService,
+  APIRoutes,
+};

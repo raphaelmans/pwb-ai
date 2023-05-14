@@ -9,15 +9,12 @@ from image_utils.image_utils import ImageUtils
 import app_models
 import schemas
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
-import uvicorn
-from static_files import SPAStaticFiles
 app_models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
 # Set up CORS
-origins = ["http://localhost", "http://localhost:8000", "http://127.0.0.1:8000" "http://localhost:3000", "http://localhost:5173",
+origins = ["http://localhost", "http://localhost:3000", "http://localhost:5173",
            "http://localhost:8080", "http://127.0.0.1:3000", "http://127.0.0.1:8080"]
 app.add_middleware(
     CORSMiddleware,
@@ -48,11 +45,11 @@ def get_db():
 
 
 @app.get("/")
-async def serve_index():
-    return FileResponse("client_build/index.html")
+async def root():
+    return {"message": "Hello World"}
 
 
-@app.post("/api/evaluate_pwb")
+@app.post("/evaluate_pwb/")
 async def evaluate_pwb(image_data: schemas.ImageData, db: Session = Depends(get_db)):
     # Save the image to disk
     image = ImageUtils.read_base64_image(image_data.datauri)
@@ -71,14 +68,14 @@ async def evaluate_pwb(image_data: schemas.ImageData, db: Session = Depends(get_
     return db_classification_result
 
 
-@app.post("/api/classification_result/", response_model=schemas.ClassificationResult)
+@app.post("/classification_result/", response_model=schemas.ClassificationResult)
 def create_classification_result(classification_result: schemas.ClassificationResultCreate, db: Session = Depends(get_db)):
     db_classification_result = crud.create_classification_result(
         db=db, classification_result=classification_result)
     return db_classification_result
 
 
-@app.get("/api/classification_result/{result_id}", response_model=schemas.ClassificationResult)
+@app.get("/classification_result/{result_id}", response_model=schemas.ClassificationResult)
 def read_classification_result(result_id: int, db: Session = Depends(get_db)):
     db_classification_result = crud.get_classification_result(
         db, result_id=result_id)
@@ -88,13 +85,13 @@ def read_classification_result(result_id: int, db: Session = Depends(get_db)):
     return db_classification_result
 
 
-@app.get("/api/classification_counts")
+@app.get("/classification_counts")
 def get_classification_counts_endpoint(db: Session = Depends(get_db)):
     counts = crud.get_classification_counts(db)
     return counts
 
 
-@app.get("/api/classification_result", response_model=List[schemas.ClassificationResult])
+@app.get("/classification_result/", response_model=List[schemas.ClassificationResult])
 def read_classification_results(
     skip: int = 0,
     limit: int = 100,
@@ -108,15 +105,8 @@ def read_classification_results(
 
 
 # Get Classification Results by Batch ID
-@app.get("/api/classification_results/{batch_id}", response_model=List[schemas.ClassificationResult])
+@app.get("/classification_results/{batch_id}", response_model=List[schemas.ClassificationResult])
 def get_classification_results_by_batch_id(batch_id: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     classification_results = crud.get_classification_results(
         db, batch_id=batch_id, skip=skip, limit=limit)
     return classification_results
-
-
-app.mount("/", SPAStaticFiles(directory="client_build", html=True), name='PWB App')
-
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
