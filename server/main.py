@@ -54,7 +54,8 @@ async def evaluate_pwb(image_data: schemas.ImageData, db: Session = Depends(get_
     # Save the image to disk
     image = ImageUtils.read_base64_image(image_data.datauri)
     ai_model = AIModel()
-    result = ai_model.classify(image)
+    gray_scale_image = ImageUtils.image_to_grayscale(image)
+    result = ai_model.classify(gray_scale_image)
     evaluation = ai_model.evaluate(result)
 
     img_bytes = ImageUtils.convert_image_to_base64(image)

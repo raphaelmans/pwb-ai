@@ -53,3 +53,7 @@ class ImageUtils:
             image_bytes.getvalue()).decode("utf-8")
 
         return encoded_image
+
+    @staticmethod
+    def image_to_grayscale(image: Image.Image) -> Image.Image:
+        return image.convert('L')

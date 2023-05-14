@@ -24,7 +24,7 @@ class AIModel:
         IMAGENET_STD = 0.229, 0.224, 0.225
 
         # Remove alpha channel if it exists
-        if image.mode == 'RGBA':
+        if image.mode != 'RGB':
             image = image.convert('RGB')
 
         def classify_transforms(size=224):
