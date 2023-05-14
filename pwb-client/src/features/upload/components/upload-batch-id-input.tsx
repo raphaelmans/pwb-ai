@@ -11,16 +11,16 @@ import { useBatchStore } from "../../../store";
 
 function UploadBatchIdInput() {
   const [focused, setFocused] = useState(false);
-  const [value, setValue] = useState("");
-  const { classes } = useStyles({
-    floating: value.trim().length !== 0 || focused,
-  });
 
   const { setbatchId, batchId } = useBatchStore((state) => {
     return {
       setbatchId: state.setBatchId,
       batchId: state.batchId,
     };
+  });
+  const [value, setValue] = useState(batchId ?? "");
+  const { classes } = useStyles({
+    floating: value.trim().length !== 0 || focused,
   });
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {

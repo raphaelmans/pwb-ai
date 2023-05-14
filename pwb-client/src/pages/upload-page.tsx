@@ -6,7 +6,7 @@ const UploadPage = () => {
   return (
     <Box h="100vh">
       <Center>
-        <Stack>
+        <Stack pb="lg">
           <Text size="xxl" component="h1">
             Upload
           </Text>

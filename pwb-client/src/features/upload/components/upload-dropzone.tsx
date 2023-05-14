@@ -12,7 +12,7 @@ import { useResultStore } from "../../results/store";
 const useStyles = createStyles((theme) => ({
   wrapper: {
     position: "relative",
-    marginBottom: rem(30),
+    marginBottom: rem(0),
     width: rem(500),
   },
 
@@ -42,8 +42,8 @@ function UploadDropzone() {
   const incrementResult = useResultStore((state) => state.increment);
 
   const { evaluateImg, isMutating } = useEvaluate();
-  const [result, setResult] = useState<ClassificationResult | undefined>();
-  const [image, setImage] = useState<string | undefined>(undefined);
+  const [results, setResults] = useState<ClassificationResult[] | undefined>();
+  const [images, setImages] = useState<string[]>([]);
 
   const openRef = useRef<() => void>(null);
   const onDrop = useCallback(
@@ -68,13 +68,19 @@ function UploadDropzone() {
             },
           })
             .then((data) => {
-              setResult(data?.data);
               if (data?.data.class_name) {
                 incrementResult(data?.data.class_name);
+                setResults((r) => {
+                  if (r) {
+                    return [...r, data.data];
+                  } else {
+                    return [data.data];
+                  }
+                });
               }
             })
             .finally(() => {
-              setImage(dataURI as string);
+              setImages((imgs) => [...imgs, dataURI as string]);
             });
         };
       }
@@ -147,10 +153,22 @@ function UploadDropzone() {
           Select Image
         </Button>
       </div>
-      {result && (
-        <UploadResult title="Evaluation Result" result={result} image={image} />
-      )}
-      <UploadFinishButton callback={() => result && setResult(undefined)} />
+      <UploadFinishButton
+        callback={() => {
+          setResults([]);
+          setImages([]);
+        }}
+      />
+
+      {results?.map((result, index) => (
+        <UploadResult
+          title="Evaluation Result"
+          result={result}
+          image={images[index]}
+          imageNumber={index + 1}
+          key={index}
+        />
+      ))}
     </>
   );
 }

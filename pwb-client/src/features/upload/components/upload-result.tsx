@@ -15,14 +15,16 @@ interface UploadResultProps {
   title: string;
   result: ClassificationResult;
   image?: string;
+  imageNumber: number;
 }
 
 function UploadResult({
   title,
   result: { class_name: condition, probability: confidence },
   image,
+  imageNumber,
 }: UploadResultProps) {
-  const { good, noGood, totalCount } = useResultStore((state) => {
+  const { good, noGood } = useResultStore((state) => {
     return {
       good: state.good,
       noGood: state.noGood,
@@ -47,7 +49,7 @@ function UploadResult({
           <Group>
             <div>
               <Text className={classes.lead} mt={30}>
-                {totalCount}
+                {imageNumber}
               </Text>
               <Text fz="xs" color="dimmed">
                 Item #
