@@ -97,9 +97,9 @@ const data: {
   label: AppRoute;
   icon: React.FC<any>;
 }[] = [
-  { link: "/", label: "Dashboard", icon: IconDashboard },
-  { link: "/real-time", label: "Real Time", icon: IconVideo },
+  { link: "/", label: "Real Time", icon: IconVideo },
   { link: "/upload", label: "Image Upload", icon: IconFileUpload },
+  { link: "/dashboard", label: "Dashboard", icon: IconDashboard },
 ];
 
 export function NavbarSimpleColored() {

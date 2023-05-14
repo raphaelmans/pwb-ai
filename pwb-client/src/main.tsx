@@ -12,11 +12,11 @@ const router = createBrowserRouter([
     element: <RootApp />,
     children: [
       {
-        path: "/",
+        path: "/dashboard",
         element: <DashboardPage />,
       },
       {
-        path: "/real-time",
+        path: "/",
         element: <CameraPage />,
       },
       {
